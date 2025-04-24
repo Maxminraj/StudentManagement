@@ -1,0 +1,52 @@
+import javax.swing.*;
+import java.awt.event.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+public class StudentForm extends JFrame {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	JTextField nameField, emailField;
+    JButton submitButton;
+
+    public StudentForm() {
+        setTitle("Student Form");
+        setSize(300, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        nameField = new JTextField(15);
+        emailField = new JTextField(15);
+        submitButton = new JButton("Submit");
+
+        setLayout(new java.awt.FlowLayout());
+        add(new JLabel("Name:"));
+        add(nameField);
+        add(new JLabel("Email:"));
+        add(emailField);
+        add(submitButton);
+
+        submitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                insertStudent(nameField.getText(), emailField.getText());
+            }
+        });
+
+        setVisible(true);
+    }
+
+    void insertStudent(String name, String email) {
+        try {
+            Connection con = DBConnection.getConnection();
+            String sql = "INSERT INTO students (name, email) VALUES (?, ?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, name);
+            ps.setString(2, email);
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Student added!");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+}
